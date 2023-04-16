@@ -1,0 +1,47 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<body>
+<img style="height: 90vh" id="img"><br>
+<input id="name">
+<button onclick="getImgList()">Search</button>
+</body>
+<script>
+    let imgList = []
+
+    function getImgList() {
+        var name = document.getElementById("name")
+        var params = {
+            name: name.value
+        };
+        var paramsStr = JSON.stringify(params);
+        var xhttp = new XMLHttpRequest()
+        xhttp.open("POST", "getImgList", true)
+        xhttp.setRequestHeader("Content-type", "application/json")
+        xhttp.send(paramsStr);
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var data = JSON.parse(this.responseText);
+                //处理返回的数据
+                console.log(data)
+                imgList = data
+                var img = document.getElementById("img"); // 获取 ID 为 "img" 的图片标签
+                img.src = "/img/" + data[0]; // 修改 "src" 属性为新的图片地址
+            }
+        }
+        document.getElementById("name").value = ""
+        document.getElementById("name").focus();
+    }
+    let input = document.getElementById("name");
+    input.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            console.log(123)
+            getImgList()
+        }
+    })
+    //最后再onload
+    onload(getImgList())
+
+</script>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "nodejs_001",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "file1": "js/file.js",
+  "scripts": {
+    "start": "app.js"
+  }
+}
