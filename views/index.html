@@ -2,10 +2,11 @@
 <!DOCTYPE html>
 <html>
 <body>
-<div style="width: 100vw;height: 95vh;text-align: center">
-    <img style="height: 100%;width: 100%;vertical-align:middle;object-fit: contain;" id="img"/>
+<div style="width: 100vw;height: 95vh;text-align: center;display: block" id="show">
+    <img class="content" id="img"/>
+    <video autoplay muted class="content" style="display: none" id="video"/>
 </div>
-<div style="width: 100vw;height: 5vh;text-align: center">
+<div style="width: 100vw;height: 5vh;text-align: center;display: block" id="searchDiv">
     <button onclick="lastPicture()">上一页</button>
     <input id="name">
     <button onclick="getImgList()">搜索</button>
@@ -16,9 +17,13 @@
 <script>
     let imgList = []
     let imgListIndex = 0
+    let show = document.getElementById("show");
     let img = document.getElementById("img") // 获取 ID 为 "img" 的图片标签
+    let video = document.getElementById("video") // 获取 ID 为 "video" 的视频标签
+    let searchDiv = document.getElementById("searchDiv") // 获取 ID 为 "video" 的视频标签
+    let name = document.getElementById("name");
+
     function getImgList() {
-        var name = document.getElementById("name")
         var params = {
             name: name.value
         };
@@ -32,42 +37,61 @@
                 let data = JSON.parse(this.responseText);
                 //处理返回的数据
                 console.log(data)
-                imgList = data
+                imgList = shuffleArray(data)
                 imgListIndex = 0
-                if (imgList.length > 1) {
-                    img.src = "/img/" + data[0] // 修改 "src" 属性为新的图片地址
+                if (imgList.length > 0) {
+                    run(imgList[imgListIndex], imgListIndex)
+                    // img.src = "/img/" + data[0] // 修改 "src" 属性为新的图片地址
                 } else {
                     img.src = "" // 修改 "src" 属性为空
+                    video.src = "" // 修改 "src" 属性为空
+                    img.style.display = "block"
+                    video.style.display = "none"
+
                 }
 
 
             }
         }
-        document.getElementById("name").value = ""
-        document.getElementById("name").focus()
+        name.value = ""
+        name.focus()
     }
 
-    function run() {
-        // var img = document.getElementById("img") // 获取 ID 为 "img" 的图片标签
-        if (imgList.length > 1) {
-            if (imgListIndex < imgList.length - 1) {
-                imgListIndex = imgListIndex + 1
-                img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
-                // clearInterval(i)
-            } else {
-                imgListIndex = 0
-                img.src = "/img/" + imgList[0] // 修改 "src" 属性为新的图片地址
-            }
-        }
-    }
-
-    let i = setInterval(run, 1000)
-
-    let input = document.getElementById("name");
-    input.addEventListener("keypress", function (event) {
+    document.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             event.preventDefault()
             getImgList()
+        }
+        if (event.key === "*") {
+            //event.preventDefault()
+            if (searchDiv.style.display === "block") {
+                searchDiv.style.display = "none"
+                show.style.height = "100vh"
+                name.value = ""
+            } else {
+                searchDiv.style.display = "block"
+                show.style.height = "95vh"
+                name.focus()
+                setTimeout(function () {
+                    name.value = ""
+                }, 10);
+            }
+        }
+        if (event.key === "/") {
+            // event.preventDefault()
+            searchDiv.style.display = "none"
+            show.style.height = "100vh"
+            name.value = ""
+            getImgList()
+        }
+        if (event.key === 'ArrowLeft') {
+            console.log(123)
+            event.preventDefault()
+            lastPicture()
+        }
+        if (event.key === 'ArrowRight') {
+            event.preventDefault()
+            nextPicture()
         }
     })
 
@@ -75,10 +99,12 @@
         if (imgList.length > 1) {
             if (imgListIndex !== 0) {
                 imgListIndex = imgListIndex - 1
-                img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
+                run(imgList[imgListIndex], imgListIndex)
+                // img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
             } else {
                 imgListIndex = imgList.length - 1
-                img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
+                run(imgList[imgListIndex], imgListIndex)
+                // img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
             }
         }
     }
@@ -87,16 +113,41 @@
         if (imgList.length > 1) {
             if (imgListIndex !== imgList.length - 1) {
                 imgListIndex = imgListIndex + 1
-                img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
+                run(imgList[imgListIndex], imgListIndex)
+                // img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
             } else {
                 imgListIndex = 0
-                img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
+                run(imgList[imgListIndex], imgListIndex)
+                // img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
             }
         }
     }
 
-    //最后再onload
-    onload(getImgList())
+    function run(fileName, imgListIndex) {
+        if (/\.(gif|jpg|jpeg|png)$/i.test(fileName)) { // 使用正则表达式判断是否是图片文件
+            // 如果是图片，可以使用 img 标签展示
+            img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
+            video.style.display = 'none';
+            img.style.display = 'block';
+        } else if (/\.(mp4|mov|avi|flv|mkv)$/i.test(fileName)) { // 使用正则表达式判断是否是视频文件
+            // 如果是视频，可以使用 video 标签展示
+            video.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的视频地址
+            img.style.display = 'none';
+            video.style.display = 'block';
+        }
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    let i = setInterval(nextPicture, 1000)
+    //最后获取图片
+    getImgList()
 
 </script>
 <style>
@@ -118,7 +169,6 @@
         height: 95vh;
         width: 100%;
         background-color: black;
-
     }
 
     img:after {
@@ -132,6 +182,13 @@
         left: 0;
         width: 100%;
         text-align: center;
+    }
+
+    .content {
+        height: 100%;
+        width: 100%;
+        vertical-align: middle;
+        object-fit: contain;
     }
 </style>
 </html>
