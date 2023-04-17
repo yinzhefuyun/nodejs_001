@@ -2,10 +2,12 @@
   "name": "nodejs_001",
   "version": "1.0.0",
   "dependencies": {
-    "express": "^4.18.2"
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "open": "^9.1.0"
   },
   "file1": "js/file.js",
   "scripts": {
-    "start": "app.js"
+    "start": "node app.js"
   }
 }

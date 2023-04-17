@@ -15,6 +15,7 @@
 
 </body>
 <script>
+    let intervalTime = 10
     let imgList = []
     let imgListIndex = 0
     let show = document.getElementById("show");
@@ -85,7 +86,6 @@
             getImgList()
         }
         if (event.key === 'ArrowLeft') {
-            console.log(123)
             event.preventDefault()
             lastPicture()
         }
@@ -145,7 +145,7 @@
         return array;
     }
 
-    let i = setInterval(nextPicture, 1000)
+    let i = setInterval(nextPicture, intervalTime*1000)
     //最后获取图片
     getImgList()
 
