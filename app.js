@@ -20,6 +20,6 @@ app.get('/img/:name', (req, res) => {
     res.sendFile(config.dir + imageName);
 });
 
-app.listen(3000, () => {
-    console.log('Server running at http://localhost:3000/'+new Date());
+app.listen(config.port, () => {
+    console.log(new Date() + 'Server running at http://localhost:' + config.port);
 });
