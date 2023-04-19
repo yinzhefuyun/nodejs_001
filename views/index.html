@@ -63,12 +63,16 @@
             event.preventDefault()
             getImgList()
         }
-        if (event.key === "*") {
+        if (event.key === "*") { // 只隐藏和显示搜索框
             //event.preventDefault()
             if (searchDiv.style.display === "block") {
                 searchDiv.style.display = "none"
                 show.style.height = "100vh"
                 name.value = ""
+                // 进入全屏模式
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen()
+                }
             } else {
                 searchDiv.style.display = "block"
                 show.style.height = "95vh"
@@ -76,14 +80,22 @@
                 setTimeout(function () {
                     name.value = ""
                 }, 10);
+                // 退出全屏模式
+                if (document.exitFullscreen) {
+                    document.exitFullscreen()
+                }
             }
         }
-        if (event.key === "/") {
+        if (event.key === "/") { // 清除搜索条件，返回默认显示全部图片
             // event.preventDefault()
             searchDiv.style.display = "none"
             show.style.height = "100vh"
             name.value = ""
             getImgList()
+            // 进入全屏模式
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen()
+            }
         }
         if (event.key === 'ArrowLeft') {
             event.preventDefault()
@@ -124,7 +136,7 @@
     }
 
     function run(fileName, imgListIndex) {
-        if (/\.(gif|jpg|jpeg|png)$/i.test(fileName)) { // 使用正则表达式判断是否是图片文件
+        if (/\.(gif|jpg|jpeg|png|bmp)$/i.test(fileName)) { // 使用正则表达式判断是否是图片文件
             // 如果是图片，可以使用 img 标签展示
             img.src = "/img/" + imgList[imgListIndex] // 修改 "src" 属性为新的图片地址
             video.style.display = 'none';
